@@ -1,5 +1,4 @@
 import copy
-from os import rename
 import re
 from pathlib import Path
 
