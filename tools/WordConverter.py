@@ -87,6 +87,9 @@ class WordConverter:
         """
         建物名称を受け、200次元のベクトルに変換する
         """
+        if word == None:
+            return '', np.zeros((40, 200))
+
         # 形態素解析（分割の全ての候補を持つ）
         allWords = self.split(word)
 
