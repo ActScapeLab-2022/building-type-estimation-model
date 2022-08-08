@@ -1,4 +1,6 @@
 {
+  "buildingNameColumn": "name",
+  "encoding": "utf-8-sig",
   "isNormalize": false,
   "rePredicate": false,
   "numberOutput": false,

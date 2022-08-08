@@ -37,6 +37,8 @@ PREDICTNAME = ['商業', '事業所', '公共', '宗教', '駐車場']
 # configファイルの読み込み
 with open(str(Path(__file__).parent/'predict_config.json')) as f:
     config = json.loads(f.read())
+BUILDINGNAMECOLUMN:str = config['buildingNameColumn']
+ENCODING:str      = config['encoding']
 ISNORMALIZE:bool  = config['isNormalize']
 REPREDICATE:bool  = config['rePredicate']
 NUMBEROUTPUT:bool = config['numberOutput']
@@ -58,12 +60,15 @@ def checkDbf(path:Path) -> gpd.GeoDataFrame:
     for suffix in SHPSUFFIX:
         if not (path.parent/f'{path.stem}.{suffix}').exists():
             raise FileNotFoundError(f'{path.stem}.{suffix} is not exists in predict/input')
-    checkCsv(path)
+    return checkCsv(path)
 
 def checkCsv(path:Path) -> gpd.GeoDataFrame:
-    data = gpd.read_file(path, encoding='utf-8')
-    if not data.columns.__contains__('name'):
-        raise IndexError(f'{path.name} is not existed the "name" column')
+    print(f'Reading {path.name}...')
+    data:gpd.GeoDataFrame = gpd.read_file(path, encoding=ENCODING)
+    print(f'Finished reading {path.name}')
+    if not data.columns.__contains__(BUILDINGNAMECOLUMN):
+        raise IndexError(f'{path.name} is not existed the "{BUILDINGNAMECOLUMN}" column')
+    data.rename(columns={BUILDINGNAMECOLUMN : 'name'}, inplace=True)
     return data
 
 # 推定と保存
@@ -79,13 +84,15 @@ def predicate(path:Path, data:Union[str, gpd.GeoDataFrame], type:DataType):
         print()
         print(f'{data} : {result}')
     else:
+        print(f'###  Predication of {path.name} is started  ###')
+        print('Convert names to vectors')
         _, train_vecs = converter.convert(data)
         result = MODEL.predict(train_vecs)
         if not NUMBEROUTPUT:
             result = list(map(lambda x: PREDICTNAME[np.argmax(x)], result))
         data['preType'] = result
         outPath = Path(__file__).parent/'predict'/f'{OUTPUTFILE_ADDITIONALNAME}{path.stem}.{type.name.lower()}'
-        data.to_file(str(outPath), index=False, encording='shift-jis')
+        data.to_file(str(outPath), index=False, encording=ENCODING)
         print()
         print('###  Finished creating the predicted data  ###')
 
@@ -106,11 +113,11 @@ def main():
                 continue
             # データの読み込み
             if path.suffix == '.shp':
-                predicate(path, checkDbf(str(path)), DataType.SHP)
+                predicate(path, checkDbf(path), DataType.SHP)
             elif path.suffix == '.dbf' or path.suffix == '.shx':
                 continue
             elif path.suffix == '.csv':
-                predicate(path, checkCsv(str(path)), DataType.CSV)
+                predicate(path, checkCsv(path), DataType.CSV)
             else:
                 warning(f'{path.name} is not supported in this project')
                 continue
