@@ -92,7 +92,8 @@ def predicate(path:Path, data:Union[str, gpd.GeoDataFrame], type:DataType):
             result = list(map(lambda x: PREDICTNAME[np.argmax(x)], result))
         data['preType'] = result
         outPath = Path(__file__).parent/'predict'/f'{OUTPUTFILE_ADDITIONALNAME}{path.stem}.{type.name.lower()}'
-        data.to_file(str(outPath), index=False, encording=ENCODING)
+        outPath.unlink(True)
+        data.to_file(outPath, index=False, encording=ENCODING)
         print()
         print('###  Finished creating the predicted data  ###')
 
