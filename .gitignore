@@ -1,3 +1,5 @@
 Source/entity_vector.model.bin
 predict/
 __pycache__/
+models/
+!models/Zenkoku/
