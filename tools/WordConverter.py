@@ -61,7 +61,7 @@ class WordConverter:
         self.tagger = MeCab.Tagger()
         self.zeroVec = [0 for _ in range(200)]
 
-    def convert(self, df: pd.DataFrame) -> tuple[list[str], np.ndarray]:
+    def convert(self, df: pd.DataFrame, readColumnName='name') -> tuple[list[str], np.ndarray]:
         """
         受け取るDataFrameは以下のフィールドを持つ
         name | re_type_num
@@ -70,13 +70,13 @@ class WordConverter:
         name | re_type_num | rename | vecs
         """
         # tqdm.pandas()
-        # self.trainDF[['rename', 'vecs']] = self.trainDF['name'].progress_apply(self.a_convert)
+        # self.trainDF[['rename', 'vecs']] = self.trainDF[readColumnName].progress_apply(self.a_convert)
         # input(self.trainDF['vecs'].shape)
 
         self.trainDF = df
         self.renames = []
         self.vecs = []
-        for word in tqdm(self.trainDF['name'].values, total=len(self.trainDF['name'].index)):
+        for word in tqdm(self.trainDF[readColumnName].values, total=len(self.trainDF[readColumnName].index)):
             result = self.a_convert(word)
             self.renames.append(result[0])
             self.vecs.append(result[1])

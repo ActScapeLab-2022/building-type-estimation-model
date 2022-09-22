@@ -1,6 +1,7 @@
 {
-  "buildingNameColumn": "name",
-  "encoding": "utf-8-sig",
+  "buildingNameColumn": "housename",
+  "predictedNameColumn": "tatemono",
+  "encoding": "shift-jis",
   "isNormalize": false,
   "rePredicate": false,
   "numberOutput": false,

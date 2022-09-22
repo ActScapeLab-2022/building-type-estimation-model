@@ -38,6 +38,7 @@ PREDICTNAME = ['商業', '事業所', '公共', '宗教', '駐車場']
 with open(str(Path(__file__).parent/'predict_config.json')) as f:
     config = json.loads(f.read())
 BUILDINGNAMECOLUMN:str = config['buildingNameColumn']
+PREDICTEDNAMECOLUMN:str = config['predictedNameColumn']
 ENCODING:str      = config['encoding']
 ISNORMALIZE:bool  = config['isNormalize']
 REPREDICATE:bool  = config['rePredicate']
@@ -68,7 +69,7 @@ def checkCsv(path:Path) -> gpd.GeoDataFrame:
     print(f'Finished reading {path.name}')
     if not data.columns.__contains__(BUILDINGNAMECOLUMN):
         raise IndexError(f'{path.name} is not existed the "{BUILDINGNAMECOLUMN}" column')
-    data.rename(columns={BUILDINGNAMECOLUMN : 'name'}, inplace=True)
+    # data.rename(columns={BUILDINGNAMECOLUMN : 'name'}, inplace=True)
     return data
 
 # 推定と保存
@@ -86,14 +87,17 @@ def predicate(path:Path, data:Union[str, gpd.GeoDataFrame], type:DataType):
     else:
         print(f'###  Predication of {path.name} is started  ###')
         print('Convert names to vectors')
-        _, train_vecs = converter.convert(data)
+        _, train_vecs = converter.convert(data, BUILDINGNAMECOLUMN)
         result = MODEL.predict(train_vecs)
         if not NUMBEROUTPUT:
             result = list(map(lambda x: PREDICTNAME[np.argmax(x)], result))
-        data['preType'] = result
+        data[PREDICTEDNAMECOLUMN] = result
         outPath = Path(__file__).parent/'predict'/f'{OUTPUTFILE_ADDITIONALNAME}{path.stem}.{type.name.lower()}'
         outPath.unlink(True)
-        data.to_file(outPath, index=False, encording=ENCODING)
+        if type == DataType.SHP:
+            data.to_file(outPath, index=False, encoding=ENCODING)
+        else:
+            data.to_csv(outPath, index=False, encoding=ENCODING)
         print()
         print('###  Finished creating the predicted data  ###')
 
