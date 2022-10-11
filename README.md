@@ -54,7 +54,7 @@
   - 推定したい名称はすべて「name」と名付けられた列に格納してください（`predict_config.json`似て変更可能）
   - predict / input を作成し，その中に推定するファイルを格納してください
   - `py predict.py`とすることで推定処理が実行されます
-  - 計算が終わると predict フォルダ内にファイルが出力され、予測結果は「preType」列に保管されます
+  - 計算が終わると predict フォルダ内にファイルが出力され、予測結果は`predict_config.json`の「predictedNameColumn」にて設定した列に保管されます
 
 
 # 細かい設定
@@ -63,7 +63,8 @@
 
 |項目名|取りうる値|説明|
 |:---:|:---:|:---|
-|buildingNameColumn|文字列|推定する名称が入った列名|
+|buildingNameColumn|文字列|入力データにおいて推定する名称が入った列名|
+|predictedNameColumn|文字列|出力データにおいて推定結果を格納する列名|
 |encoding|文字列|読み込むファイルのエンコーディング|
 |isNormalize|true / false|固有名詞を排除した名称の推定を行う|
 |rePredicate|true / false|結果出力済みのファイルに対して再度推定を行う|
