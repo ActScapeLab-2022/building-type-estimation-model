@@ -19,14 +19,17 @@
 
 # 初期設定
 
-1. このレポジトリをダウンロードし、任意の場所に展開する
+1. `git clone https://github.com/ActScapeLab-2022/building-type-estimation-model.git`によってこのレポジトリをダウンロードする
+
 2. 必要なデータをダウンロードする
     - 作者の環境は「Windows 11」の「Python 3.9.1」となっている
-    - 展開した場所をカレントディレクトリとして`git install -r requirements.txt`を実行する
+    - 展開した場所をカレントディレクトリとして`pip install -r requirements.txt`を実行する
+
 3. 学習済みモデルをの導入
     1. 展開した場所に`Source`フォルダを作成する
     1. テキストデータのベクトル化で使用する学習済みモデルを[ダウンロード](http://www.cl.ecei.tohoku.ac.jp/~m-suzuki/jawiki_vector/data/20170201.tar.bz2)する
     1. ダウンロードしたファイルを解凍し，`entity_vector.model.bin`を`Source`フォルダ内に保存する
+
 4. コマンドプロンプトを展開した場所で起動し`py predict.py セブンイレブン`と入力し、以下の応答を得られれば設定は終了
     ```
     ###  R E S U L T  ###
