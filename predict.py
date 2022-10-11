@@ -97,6 +97,7 @@ def predicate(path:Path, data:Union[str, gpd.GeoDataFrame], type:DataType):
         if type == DataType.SHP:
             data.to_file(outPath, index=False, encoding=ENCODING)
         else:
+            data.drop(columns='geometry', inplace=True)
             data.to_csv(outPath, index=False, encoding=ENCODING)
         print()
         print('###  Finished creating the predicted data  ###')
