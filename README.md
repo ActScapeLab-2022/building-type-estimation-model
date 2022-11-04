@@ -54,8 +54,8 @@
   - `py predict.py 推定したい名称`と入力することで結果を得ることができます
 - ファイルに格納されている大量の名称を一括して推定したい場合
   - `.dbf, .shp, .shx`と`.csv`の2種類をサポートしています
-  - 推定したい名称はすべて「name」と名付けられた列に格納してください（`predict_config.json`似て変更可能）
-  - predict / input を作成し，その中に推定するファイルを格納してください
+  - 推定したい名称はすべて「name」と名付けられた列に格納してください（`predict_config.json`にて変更可能）
+  - predict / input に推定するファイルを格納してください
   - `py predict.py`とすることで推定処理が実行されます
   - 計算が終わると predict フォルダ内にファイルが出力され、予測結果は`predict_config.json`の「predictedNameColumn」にて設定した列に保管されます
 

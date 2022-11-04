@@ -1,5 +1,7 @@
 Source/entity_vector.model.bin
-predict/
+predict/input/*.csv
+predict/*.csv
+!predict/input/sample.csv
 __pycache__/
 models/
 !models/Zenkoku/
