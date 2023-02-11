@@ -75,6 +75,60 @@
 |modelName|文字列|models 内のフォルダ名を指定することで，そのフォルダに格納されているモデルを用いて種別の推定を行う|
 
 
+# 自作プログラム上で動かす
+
+本リポジトリが提供する建物名称から建物種別を推定するプロセスを自作のプログラム上で動作させることも可能である．
+
+本リポジトリを上記の手順によって動作するように環境構築した後，以下の例に沿ってプログラムを作成することで，推定プロセスを呼び出すことができる．
+
+```python
+import sys
+
+import pandas as pd
+
+# building-type-estimation-modelのフォルダパスを指定
+path = ...
+sys.path.append(path)
+import predict
+from predict import DataType, predicate
+
+# 建物名称を含むデータ（建物名称はhousename列に入っているとする）のインポート
+df = pd.read_csv('file/to/path')
+
+# 建物名称はname列に格納されている必要がある
+df['name'] = df['housename']
+# name列でない列名をそのまま利用する場合は，以下のように対応する変数を直接書き換える
+# predict.BUILDINGNAMECOLUMN = 'housename'
+
+# NaNがあると推定できないため除外しておく
+df.dropna(subset=['name'], inplace=True)
+
+# 種別推定
+# 読み込むデータに対応したDataTypeを設定する
+# （CSVのほかにSHP=ShapeFile, TXT=単発名称の推定 に対応している）
+predicate(DataType.CSV, df, 'fileName')
+```
+
+- プログラム中で設定した名称を格納した列名の変更のような設定の書き換えは以下の変数が対応している
+
+    - BUILDINGNAMECOLUMN $ \rightarrow $ 推定する建物名称を格納した列名
+    
+    - PREDICTEDNAMECOLUMN $ \rightarrow $ 推定した建物種別を格納する列名
+    
+    - ENCODING $ \rightarrow $ ファイルのエンコード
+    
+    - ISNORMALIZE $ \rightarrow $ 正規化を行うか否か
+    
+    - REPREDICATE $ \rightarrow $ 推定済みのファイルが出力されている場合であっても再推定するか
+    
+    - NUMBEROUTPUT $ \rightarrow $ 予測結果を各種別に対応する確率で出力する
+    
+    - MODELNAME $ \rightarrow $ 推定に利用する学習済みモデルのフォルダ名
+    
+    - OUTPUTFILE_ADDITIONALNAME $ \rightarrow $ 推定済みのファイルにつける接頭辞
+
+
+
 # 諸注意
 
 - 本モデルは平均正答率80%程度のモデルになります
