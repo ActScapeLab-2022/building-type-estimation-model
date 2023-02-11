@@ -73,7 +73,7 @@ def checkCsv(path:Path) -> gpd.GeoDataFrame:
     return data
 
 # 推定と保存
-def predicate(path:Path, data:Union[str, gpd.GeoDataFrame], type:DataType):
+def predicate(type:DataType, data:Union[str, gpd.GeoDataFrame], stem:str=None):
     converter = WordConverter(ISNORMALIZE, False)
     if type == DataType.TXT:
         _, wordVec = converter.a_convert(data)
@@ -85,14 +85,14 @@ def predicate(path:Path, data:Union[str, gpd.GeoDataFrame], type:DataType):
         print()
         print(f'{data} : {result}')
     else:
-        print(f'###  Predication of {path.name} is started  ###')
+        print(f'###  Predication of {stem} is started  ###')
         print('Convert names to vectors')
         _, train_vecs = converter.convert(data, BUILDINGNAMECOLUMN)
         result = MODEL.predict(train_vecs)
         if not NUMBEROUTPUT:
             result = list(map(lambda x: PREDICTNAME[np.argmax(x)], result))
         data[PREDICTEDNAMECOLUMN] = result
-        outPath = Path(__file__).parent/'predict'/f'{OUTPUTFILE_ADDITIONALNAME}{path.stem}.{type.name.lower()}'
+        outPath = Path(__file__).parent/'predict'/f'{OUTPUTFILE_ADDITIONALNAME}{stem}.{type.name.lower()}'
         outPath.unlink(True)
         if type == DataType.SHP:
             data.to_file(outPath, index=False, encoding=ENCODING)
@@ -119,17 +119,17 @@ def main():
                 continue
             # データの読み込み
             if path.suffix == '.shp':
-                predicate(path, checkDbf(path), DataType.SHP)
+                predicate(DataType.SHP, checkDbf(path), path.stem)
             elif path.suffix == '.dbf' or path.suffix == '.shx':
                 continue
             elif path.suffix == '.csv':
-                predicate(path, checkCsv(path), DataType.CSV)
+                predicate(DataType.CSV, checkCsv(path), path.stem)
             else:
                 warning(f'{path.name} is not supported in this project')
                 continue
 
     elif len(args) == 2:
-        predicate('', args[1], DataType.TXT)
+        predicate(DataType.TXT, args[1])
 
     elif len(args) > 2:
         raise ArgumentTypeError(
@@ -138,4 +138,7 @@ def main():
             )
 
 
-main()
+
+if __name__ == "__main__":
+    main()
+    
